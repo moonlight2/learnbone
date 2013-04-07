@@ -4,6 +4,8 @@ $(function() {
     var AppState = {
         username: ""
     }
+    
+    var Family = ['Ilia', 'Lilya'];
 
     var Views = {};
 
@@ -41,11 +43,12 @@ $(function() {
         },
         check: function() {
             AppState.username = this.el.find("input:text").val();
-            if (AppState.username === "test") {
+            if (_.detect(Family, function(elem){return elem == AppState.username})) {
                 controller.navigate("!/success", true);
             } else {
                 controller.navigate("!/error", true);
             }
+
         },
         render: function() {
             $(this.el).html(this.template(AppState));
