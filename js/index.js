@@ -1,11 +1,6 @@
 $(function() {
 
 
-    var AppState = {
-        username: ""
-    };
-
-    var Views = {};
 
     var Controller = Backbone.Router.extend({
         routes: {
@@ -14,81 +9,44 @@ $(function() {
             "!/success": "success",
             "!/error": "error"
         },
+        showPage: function(page) {
+            $(".block").hide();
+            $("#" + page).show();
+        },
         start: function() {
-            if(View.start != null) {
-                Views.start.render();
-            }
+            this.showPage("start");
         },
         success: function() {
-            if(View.success != null) {
-                Views.start.render();
-            }
+            this.showPage("success");
         },
         error: function() {
-            if(View.error != null) {
-                Views.start.render();
-            }
+            this.showPage("error");
         }
     });
-    
+
     var controller = new Controller();
+
+    Backbone.history.start();
+
 
     var Start = Backbone.View.extend({
         
-        el: $('#block'),
-                
-        template: _.template($('#start').html),
-                
+        el: $('#start'),
+
         events: {
-            "click input:button" : "check"
+            "click input:button": "check"
         },
         check: function() {
-    
-            AppState.username = this.el.find("input:text").val();
-            
-            if (AppState.username == "test") {
-                controller.navigate("success", true);
-            } else {
-                controller.navigate("error", true);
-            }
-        },
-        
-        render: function() {
-            $(this.el).html(this.template())
-        }
-    });
-    
-    var Success = Backbone.View.extend({
-        el: $("#block"),
-        
-        template: _.template($("#success").html()),
-        
-        render: function() {
-            $(this.el).html(this.template(AppState));
-        }
-    });
-    
-    var Error = Backbone.View.extend({
-        el: $("#block"),
-        
-        template: _.template($("#error").html()),
-        
-        render: function() {
-            $(this.el).html(this.template(AppState));
-        }
-    });
-    
-    Views = {
-        start: new Start(),
-        success: new Success(),
-        error: new Error()
-    }
-    
-    var controller = new Controller();
-//    var views = new Views();
-   
-    Backbone.history.start();
 
+            if (this.el.find("input:text").val() == "test") {
+                controller.navigate("!/success", true);
+            } else {
+                controller.navigate("!/error", true);
+            }
+        }
+    });
+
+    var start = new Start();
 
 });
     

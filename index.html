@@ -16,39 +16,30 @@
                 <li><a href="#!/error">Error</a></li>
             </ul>
         </div>
-        <div id="block" class="block">
 
+        <div id="start" class="block">
+            <div class="userplace">
+                <label for="username">Name of user: </label>
+                <input type="text" id="username" />
+            </div>
+            <div class="buttonplace">
+                <input type="button" value="Press" />
+            </div>
         </div>
 
-        <script type="text/template" id="start">
-            <div class="start">
-                <div class="userplace">
-                    <label for="username">Name of user: </label>
-                    <input type="text" id="username" />
-                </div>
-                <div class="buttonplace">
-                    <input type="button" value="Press" />
-                </div>
-            </div>
-        </script>
+        <div id="error" class="block">
+            <p>
+                Fail, my dear <%= username %>
+            </p>
+            <a href="#!/">Go back</a>
+        </div>
 
-        <script type="text/template" id="error">
-           <div class="error">
-               <p>
-                   Fail, my dear <%= username %>
-               </p>
-               <a href="#!/">Go back</a>
-           </div>
-        </script>
-        
-        <script type="text/template" id="success">
-            <div class="success">
-                <p>
-                    Success, my super <%= username %>
-                </p>
-                <a href="#!/">Go back</a>
-            </div>
-        </script>
+        <div id="success" class="block">
+            <p>
+                Success, my super <%= username %>
+            </p>
+            <a href="#!/">Go back</a>
+        </div>
 
     </body>
 </html>
