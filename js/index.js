@@ -1,6 +1,11 @@
 $(function() {
 
 
+    var AppState = {
+        username: ""
+    }
+
+    var Views = {};
 
     var Controller = Backbone.Router.extend({
         routes: {
@@ -9,44 +14,68 @@ $(function() {
             "!/success": "success",
             "!/error": "error"
         },
-        showPage: function(page) {
-            $(".block").hide();
-            $("#" + page).show();
-        },
         start: function() {
-            this.showPage("start");
+            if (Views.start !== null) {
+                Views.start.render();
+            }
         },
         success: function() {
-            this.showPage("success");
+            if (Views.success !== null) {
+                Views.success.render();
+            }
         },
         error: function() {
-            this.showPage("error");
+            if (Views.error !== null) {
+                Views.error.render();
+            }
         }
     });
 
     var controller = new Controller();
 
-    Backbone.history.start();
-
-
     var Start = Backbone.View.extend({
-        
-        el: $('#start'),
-
+        el: $('#block'),
+        template: _.template($('#start').html()),
         events: {
             "click input:button": "check"
         },
         check: function() {
-
-            if (this.el.find("input:text").val() == "test") {
+            AppState.username = this.el.find("input:text").val();
+            if (AppState.username === "test") {
                 controller.navigate("!/success", true);
             } else {
                 controller.navigate("!/error", true);
             }
+        },
+        render: function() {
+            $(this.el).html(this.template(AppState));
         }
     });
 
-    var start = new Start();
+
+    var Success = Backbone.View.extend({
+        el: $('#block'),
+        template: _.template($('#success').html()),
+        render: function() {
+            $(this.el).html(this.template(AppState));
+        }
+    });
+    
+    var Error = Backbone.View.extend({
+        el: $('#block'),
+        template: _.template($('#error').html()),
+        render: function() {
+            $(this.el).html(this.template(AppState));
+        }
+    });
+
+    Views = {
+        start: new Start(),
+        success: new Success(),
+        error: new Error()
+    };
+    
+    Backbone.history.start();
 
 });
     
