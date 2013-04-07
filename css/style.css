@@ -1,0 +1,17 @@
+/* 
+    Document   : style
+    Created on : 06.04.2013, 22:19:06
+    Author     : ilia
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+#error, #success, #start
+{
+    color: green;
+    display: none;
+}
