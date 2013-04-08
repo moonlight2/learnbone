@@ -1,13 +1,15 @@
 $(function() {
 
+    var AppState = Backbone.Model.extend({
+        defaults: {
+            username: "",
+            state: "start"
+        }
+    });
 
-    var AppState = {
-        username: ""
-    }
-    
-    var Family = ['Ilia', 'Lilya'];
+    var appState = new AppState();
 
-    var Views = {};
+    var Family = ['moo', 'Lilya'];
 
     var Controller = Backbone.Router.extend({
         routes: {
@@ -17,67 +19,63 @@ $(function() {
             "!/error": "error"
         },
         start: function() {
-            if (Views.start !== null) {
-                Views.start.render();
-            }
+            appState.set({state: 'start'});
         },
         success: function() {
-            if (Views.success !== null) {
-                Views.success.render();
-            }
+            appState.set({state: 'success'});
+            console.log(appState);
         },
         error: function() {
-            if (Views.error !== null) {
-                Views.error.render();
-            }
+            appState.set({state: 'error'});
+            console.log(appState);
         }
     });
 
     var controller = new Controller();
 
-    var Start = Backbone.View.extend({
+    var Block = Backbone.View.extend({
         el: $('#block'),
-        template: _.template($('#start').html()),
+        templates: {
+            "start": _.template($('#start').html()),
+            "success": _.template($('#success').html()),
+            "error": _.template($('#error').html())
+        },
         events: {
             "click input:button": "check"
         },
+        initialize: function() {
+            this.model.bind("change", this.render, this);
+        },
         check: function() {
-            AppState.username = this.el.find("input:text").val();
-            if (_.detect(Family, function(elem){return elem == AppState.username})) {
-                controller.navigate("!/success", true);
-            } else {
-                controller.navigate("!/error", true);
-            }
-
+            var username = this.el.find("input:text").val();
+            var find = (_.detect(Family, function(elem) {
+                return elem === username
+            }));
+            appState.set({// set state and username to model
+                "state": find ? "success" : "error",
+                "username": username
+            });
         },
         render: function() {
-            $(this.el).html(this.template(AppState));
+            var state = this.model.get("state"); // get field 'state' from AppState
+            $(this.el).html(this.templates[state](this.model.toJSON()));
+            return this;
         }
     });
 
+    var block = new Block({ model: appState });
+    appState.trigger("change");
 
-    var Success = Backbone.View.extend({
-        el: $('#block'),
-        template: _.template($('#success').html()),
-        render: function() {
-            $(this.el).html(this.template(AppState));
-        }
-    });
-    
-    var Error = Backbone.View.extend({
-        el: $('#block'),
-        template: _.template($('#error').html()),
-        render: function() {
-            $(this.el).html(this.template(AppState));
+    // podpiska na smenu sostoyaniya u kontrollera
+    appState.bind("change:state", function() {
+        var state = this.get("state");
+        if (state === "start") {
+            controller.navigate("!/", false);
+        } else {
+            controller.navigate("!/" + state, false);
         }
     });
 
-    Views = {
-        start: new Start(),
-        success: new Success(),
-        error: new Error()
-    };
-    
     Backbone.history.start();
 
 });
