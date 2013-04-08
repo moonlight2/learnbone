@@ -1,5 +1,8 @@
 $(function() {
 
+
+    /*---------------------------- Models ------------------------------------*/
+
     var AppState = Backbone.Model.extend({
         defaults: {
             username: "",
@@ -9,7 +12,32 @@ $(function() {
 
     var appState = new AppState();
 
-    var Family = ['moo', 'Lilya'];
+    var UserNameModel = Backbone.Model.extend({
+        defaults: {
+            "Name": ""
+        }
+    });
+
+    /*---------------------------- Collections -------------------------------*/
+
+    var Family = Backbone.Collection.extend({
+        model: UserNameModel,
+        checkUser: function(username) {
+            var findResult = this.find(function(user) {
+                return user.get("Name") === username
+            })
+            return findResult != null;
+        }
+    });
+
+    var MyFamily = new Family([
+        {Name: "moo1"},
+        {Name: "boo"},
+        {Name: "poo"},
+    ]);
+
+
+    /*---------------------------- Controller --------------------------------*/
 
     var Controller = Backbone.Router.extend({
         routes: {
@@ -30,8 +58,10 @@ $(function() {
             console.log(appState);
         }
     });
-
+    
     var controller = new Controller();
+
+    /*------------------------- View -----------------------------------------*/
 
     var Block = Backbone.View.extend({
         el: $('#block'),
@@ -41,16 +71,18 @@ $(function() {
             "error": _.template($('#error').html())
         },
         events: {
-            "click input:button": "check"
+            "click input:button": "check",
+            "click div": "al"
         },
         initialize: function() {
             this.model.bind("change", this.render, this);
         },
+        al: function() {
+            alert('My allll');
+        },
         check: function() {
             var username = this.el.find("input:text").val();
-            var find = (_.detect(Family, function(elem) {
-                return elem === username
-            }));
+            var find = MyFamily.checkUser(username);
             appState.set({// set state and username to model
                 "state": find ? "success" : "error",
                 "username": username
@@ -63,7 +95,7 @@ $(function() {
         }
     });
 
-    var block = new Block({ model: appState });
+    var block = new Block({model: appState});
     appState.trigger("change");
 
     // podpiska na smenu sostoyaniya u kontrollera
