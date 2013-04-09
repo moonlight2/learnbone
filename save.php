@@ -1,8 +1,14 @@
 <?php
 
-$arr1 = array('name'=>'MADF', 'date'=>345);
-$arr2 = array('name'=>'MADF', 'date'=>345);
+$postdata = json_decode(file_get_contents("php://input"), true);
 
-echo json_encode(array($arr1, $arr2));
+
+
+
+$success = ($postdata['done'] == 0) ? 0 : 1;
+
+$responce = array('success'=>$success);
+echo json_encode($responce);
+
 
 ?>
